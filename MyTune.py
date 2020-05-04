@@ -9,40 +9,37 @@ from tkinter import filedialog # To browse the file
 from mutagen.mp3 import MP3  # to handel mp3 formte
 from pygame import mixer # to handel music
 
+#-----------------------------------------------------------------ROOT_WINDOW-------------------------------------------------------------
 
 #root = Tk() # creating window (simple window without any theme)
 root = tk.ThemedTk() # creating themed window
 root.get_themes() # getting themes
 root.set_theme('radiance') # applying theme
+root.title("MyTunes")
+root.iconbitmap(r'images/icon.ico')
 
-v = DoubleVar()# for getting current volume
+#------------------------------------------------------------------VARIABLE----------------------------------------------------------------
 
+v =DoubleVar()# for getting current volume
+playlist=[] # playlist contanins filename with path
 
+#----------------------------------------------------------------STSTUS_BAR------------------------------------------------------------------
 
-# creating status bar
-#font='kind_of_font    size     style '
 statusbar = ttk.Label(root, text="Welcome to Melody",background='cyan4',foreground='white',relief=SUNKEN, anchor=W,font='courier 15 italic')
 statusbar.pack(side=BOTTOM, fill=X)
 
-
-
-# Create the menubar
+#-----------------------------------------------------------------MENU_BAR-----------------------------------------------------------------
 menubar = Menu(root)
 root.config(menu=menubar)
 
-# Create the submenu
-subMenu = Menu(menubar, tearoff=0)
+subMenu = Menu(menubar, tearoff=0) # Create the submenu
 
-playlist=[]
-# playlist contanins filename with path
-# listbox contains only file name
-# fullpath + filename is required to play the music inside play_music load function
-
+#---------------------------------------------------------------BROWSE_FILE--------------------------------------------------------------
 def browse_file():
     global filename_path
     filename_path = filedialog.askopenfilename()
     add_to_playlist(filename_path)
-
+#-------------------------------------------------------------ADD_TO_PLAYLIST--------------------------------------------------------------
 def add_to_playlist(filename):
     filename=os.path.basename(filename)
     index=0
@@ -51,16 +48,14 @@ def add_to_playlist(filename):
     playlist.insert(index,filename_path)
     index +=1
 
-
+#--------------------------------------------------------------ADDING_CASCADE---------------------------------------------------------------
 menubar.add_cascade(label="File", menu=subMenu)
 subMenu.add_command(label="Open", command=browse_file)
 # root.destory is used to destorry
 subMenu.add_command(label="Exit", command=root.destroy)
 
-
 def about_us():
     tkinter.messagebox.showinfo('About MyTune', 'This is a music player build using Python Tkinter by gauravk2050')
-
 
 subMenu = Menu(menubar, tearoff=0)
 menubar.add_cascade(label="Help", menu=subMenu)
@@ -68,14 +63,7 @@ subMenu.add_command(label="About Us", command=about_us)
 
 mixer.init()  # initializing the mixer
 
-root.title("MyTunes")
-# only ico icons can be use. so convert icons from ico converter
-root.iconbitmap(r'images/icon.ico')
-
-#root window-statusbar,leftframe,rightframe
-#leftframe- listbox(playlist)
-#rightframe-topfrme,middleframe,bottumframe
-
+#----------------------------------------------------------------LEFT_FRAME---------------------------------------------------------------------
 
 leftframe= Frame(root)
 leftframe.pack(side=LEFT,padx=30,pady=30)
@@ -83,6 +71,7 @@ leftframe.pack(side=LEFT,padx=30,pady=30)
 toplf=Frame(leftframe)
 toplf.pack()
 
+#----------------------------------------------------------------PLAYLIST------------------------------------------------------------------------
 
 playlistbox = Listbox(toplf,selectbackground='deepskyblue2',selectmode=EXTENDED,font=("times new roman",12,"bold"),bg="gray80",fg="black",bd=5,relief=GROOVE)
 playlistbox.pack(fill = BOTH)
@@ -100,6 +89,8 @@ bottomlf.pack()
 addbtn=ttk.Button(toplf,text='  Add  ',command=browse_file)
 addbtn.pack(side=LEFT)
 
+#----------------------------------------------------------------DELETE_SONG------------------------------------------------------------------------
+
 def del_song():
     selected_song = playlistbox.curselection()
     selected_song = int(selected_song[0])
@@ -109,6 +100,7 @@ def del_song():
 deletebtn = ttk.Button(toplf,text=' Remove ',command=del_song)
 deletebtn.pack(side=LEFT)
 
+#--------------------------------------------------------------PLAY_PREVIOUS_SONG--------------------------------------------------------------------
 def previous():
     global z
     z = z - 1
@@ -129,7 +121,7 @@ previous.pack(side=LEFT,pady=10)
 
 all=PhotoImage()
 
-
+#----------------------------------------------------------------PLAY_NEXT_SONG--------------------------------------------------------------------
 def next():
     global z
     z = z + 1
@@ -147,7 +139,7 @@ def next():
 nextphoto=PhotoImage(file='images/next.png')
 next=ttk.Button(bottomlf,image=nextphoto,command=next)
 next.pack(side=LEFT,pady=10)
-
+#------------------------------------------------------------------RIGHT_FRAME--------------------------------------------------------------------
 rightframe= Frame(root)
 rightframe.pack(padx=20,pady=30)
 
@@ -161,7 +153,7 @@ lengthlabel.pack(pady=5)
 currenttimelabel = ttk.Label(topframe, text='Current Time : --:--', relief=GROOVE)
 currenttimelabel.pack()
 
-
+#--------------------------------------------------------------PREVIEW_SONG_DETAILS--------------------------------------------------------------------
 def show_details(play_song):
     # check file formate i.e mp3 or wav or any other
     file_data = os.path.splitext(play_song)
@@ -186,7 +178,7 @@ def show_details(play_song):
     t1 = threading.Thread(target=start_count, args=(total_length,))
     t1.start()
 
-
+#--------------------------------------------------------------COUNT_SONG_DURATION--------------------------------------------------------------------
 def start_count(t):
     global paused
     # mixer.music.get_busy(): - Returns FALSE when we press the stop button (music stop playing)
@@ -206,8 +198,7 @@ def start_count(t):
             time.sleep(1)
             # current_time += 1
             t -= 1
-
-
+#-------------------------------------------------------------------PLAY_SONG--------------------------------------------------------------------
 def play_music():
     global paused
 
@@ -233,12 +224,12 @@ def play_music():
         except:
             tkinter.messagebox.showerror('File not found', 'Mytune could not find the file. Please check again.')
 
-
+#----------------------------------------------------------------------STOP_SONG--------------------------------------------------------------------
 def stop_music():
     mixer.music.stop()
     statusbar['text'] = "Music Stopped"
 
-
+#----------------------------------------------------------------------PAUSE_SONG--------------------------------------------------------------------
 paused = FALSE
 def pause_music():
     global paused
@@ -246,18 +237,19 @@ def pause_music():
     mixer.music.pause()
     statusbar['text'] = "Music Paused"
 
-
+#----------------------------------------------------------------------REWIND_SONG--------------------------------------------------------------------
 def rewind_music():
     play_music()
     statusbar['text'] = "Music Rewinded"
 
+#-----------------------------------------------------------------------SONG_VOLUME--------------------------------------------------------------------
 def set_vol(val):
     # val have string value so we need to convert it
     volume = float(val) / 100
     mixer.music.set_volume(volume)
     # it is devided by 100 because set_volume of mixer takes value only from 0 to 1. Example - 0, 0.1,0.55,0.54.0.99,1
 
-
+#----------------------------------------------------------------------MUTE_SONG--------------------------------------------------------------------
 muted = FALSE
 def mute_music():
     global muted
@@ -280,6 +272,7 @@ def mute_music():
 middleframe = Frame(rightframe)
 middleframe.pack(pady=30, padx=30)
 
+#---------------------------------------------------------BUTTONS_IN_RIGHT_FRAME-------------------------------------------------------------
 # play button
 playPhoto = PhotoImage(file='images/play.png')
 playBtn = ttk.Button(middleframe, image=playPhoto, command=play_music)
@@ -316,7 +309,7 @@ scale.set(70)  # implement the default value of scale when music player starts
 mixer.music.set_volume(0.7)
 scale.grid(row=0, column=2, pady=15, padx=10)
 
-
+#-------------------------------------------------------------CLOSING_APP----------------------------------------------------------------
 def on_closing():
     stop_music() # closing music
     # closng window
