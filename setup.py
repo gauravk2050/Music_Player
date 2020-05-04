@@ -1,3 +1,4 @@
+# convert your program to exe file
 import sys
 from cx_Freeze import setup, Executable
 
@@ -10,8 +11,8 @@ base = None
 if sys.platform == "win32":
     base = "Win32GUI"
 
-setup(  name = "MyTunes",
+setup(  name = "MyTunes",  # name you want to have of your app
         version = "0.1",
         description = "Music App!",
         options = {"build_exe": build_exe_options},
-        executables = [Executable("MyTune.py", base=base)])
+        executables = [Executable("MyTune.py", base=base)]) # your .py file name
