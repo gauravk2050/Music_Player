@@ -1,13 +1,14 @@
-import os
-import threading
-import time
-import tkinter.messagebox
-from tkinter import *
-from tkinter import ttk # theam tkinter
-from ttkthemes import themed_tk as tk # for themes
-from tkinter import filedialog # To browse the file
-from mutagen.mp3 import MP3  # to handel mp3 formte
-from pygame import mixer # to handel music
+# -------------------------------------------------------------IMPORTING_MODULES---------------------------------------------------------
+import os                                           # to interact with operating system
+import threading                                    # to syncronise threads
+import time                                         # to use time
+import tkinter.messagebox                           # for messagebox
+from tkinter import *                               # to create graphical user interface (GUI)
+from tkinter import ttk                             # theam tkinter
+from ttkthemes import themed_tk as tk               # for themes
+from tkinter import filedialog                      # To browse the file
+from mutagen.mp3 import MP3                         # to handel mp3 formte
+from pygame import mixer                            # to handel music
 
 #-----------------------------------------------------------------ROOT_WINDOW-------------------------------------------------------------
 
